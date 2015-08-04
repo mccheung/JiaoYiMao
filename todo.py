@@ -40,6 +40,10 @@ def default_out():
             else:
                 print f + "\t" + "Never!"
 
+def usage():
+    print "./todo.py"
+    print "./todo.py --area"
+
 
 def area_out():
     path = build_dir('..')
@@ -69,6 +73,7 @@ if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:], "a:", ["area"])
     except getopt.GetoptError:
+        usage()
         sys.exit()
 
     if len( opts ) == 0:
@@ -78,3 +83,7 @@ if __name__ == '__main__':
     for o, a in opts:
         if o in ( '-a', '--area' ):
             area_out()
+            sys.exit()
+
+    # Default 输出
+    usage()
