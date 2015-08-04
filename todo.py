@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # encoding: UTF-8
 
-import os
-import sys
-import re
+import re, os, sys, getopt
 from datetime import datetime, date
 from yaml import load, dump
 
@@ -22,8 +20,7 @@ def load_yaml( path, f ):
     yaml = load( stream )
     return yaml
 
-
-if __name__ == '__main__':
+def default_out():
     path = build_dir('..')
     files = get_files( path )
 
@@ -43,3 +40,41 @@ if __name__ == '__main__':
             else:
                 print f + "\t" + "Never!"
 
+
+def area_out():
+    path = build_dir('..')
+    files = get_files( path )
+
+    # 字典型的 area
+    areas = {}
+    for f in files:
+        m = re.match(r'\d+\.yaml$',  f )
+        if m:
+            yaml = load_yaml( path, f )
+
+            if areas.has_key( yaml["area"] ):
+                areas[yaml["area"]] = str( areas[yaml["area"]] ) + "\t" + f
+            else:
+                areas[yaml["area"]] = f
+
+
+    keys = areas.keys()
+    keys.sort()
+
+    for k in keys:
+        print str(k) + ":\t" + areas[k]
+
+
+if __name__ == '__main__':
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "a:", ["area"])
+    except getopt.GetoptError:
+        sys.exit()
+
+    if len( opts ) == 0:
+        default_out()
+        sys.exit()
+
+    for o, a in opts:
+        if o in ( '-a', '--area' ):
+            area_out()
